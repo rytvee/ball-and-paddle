@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ball and Paddle</title>
+    <style>
+        canvas {
+            background: #000;
+            display: block;
+            margin: 0 auto;
+            border: 2px solid #fff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="480" height="320"></canvas>
+    <div id="gameOverScreen" style="text-align: center; margin-top: 10px; display: none;">
+        <button id="tryAgainBtn" style="
+            background: #3498db;
+            color: #fff;
+            font-size: 18px;
+            border-radius: 8px;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            ">Try Again</button>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
