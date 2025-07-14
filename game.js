@@ -185,7 +185,7 @@ canvas.addEventListener("click", function(e) {
         // Reset everything
         score = 0;
         level = 1;
-        lives = 3;
+        lives = 5;
         dx = 2;
         dy = -2;
         isGameOver = false;
