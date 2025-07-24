@@ -13,7 +13,7 @@ A simpe browser-based ball and paddle game built with HTML5 Canvas and JavaScrip
 
 Play the game directly from your browser:
 
-https://rytvee.github.io/ball-and-paddle/
+https://rytvee.github.io/ball-and-paddle-game/
 
 ## Controls
 - Move Paddle Left: ←
