@@ -22,6 +22,16 @@ tic-tac-toe/
 └── images/           # Icon, game play gif
 ```
 
+## 🎮 Gameplay Overview
+
+| Part                   | Role                                                                                          |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| **Ball**               | Moves up/down & bounces off walls and paddle. Position updates using `requestAnimationFrame`. |
+| **Paddle**             | Controlled by user (move left/right or up/down depending on implementation).                  |
+| **Collision Logic**    | Detects overlap between ball and paddle or walls. Reverses direction upon impact.             |
+| **Scoring (optional)** | Could be added to track missed hits or keep points.                                           |
+
+
 ## 🎮 Game Play
 
 ![2-Players Mode](images/game-play.gif)
