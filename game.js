@@ -1,216 +1,345 @@
+//  =======================
+//          Setup
+//  =======================
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// Ball properties
-let ballX = canvas.width / 20;
-let ballY = canvas.height - 30;
-let ballRadius = 10;
-let dx = 2;
-let dy = -2;
+const paddleHitSound = document.getElementById("paddleHitSound");
+const loseLifeSound = document.getElementById("loseLifeSound");
+const bgMusic = document.getElementById("bgMusic");
+const gameOverSound = document.getElementById("gameOverSound");
+const winSound = document.getElementById("winSound");
+const levelUpSound = document.getElementById("levelUpSound");
 
-// Game variables
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+  document.getElementById("leftBtn").style.display = "inline-block";
+  document.getElementById("rightBtn").style.display = "inline-block";
+  document.getElementById("pause-label").style.display = "none";
+}
+
+let ballX, ballY;
+let dx = 0;
+let dy = 0;
+let ballRadius, paddleHeight, paddleWidth;
+let paddleX;
 let score = 0;
 let level = 1;
 let lives = 5;
+let nextLevelScore = 5;
+let isGameStarted = false;
 let isGameOver = false;
-const speedMultiplier = 1.2;
+let isPaused = false;
+let animationId;
+let rightPressed = false;
+let leftPressed = false;
 
-// Button for Game Over
+const MAX_LEVEL = 3;
+const WINNING_SCORE = (MAX_LEVEL - 1) * 5;
+
 const button = {
-  x: canvas.width / 2 - 50,
-  y: canvas.height / 2 + 30,
+  x: 0,
+  y: 0,
   width: 100,
   height: 40,
   color: "#4285F4",
   text: "Restart"
 };
 
-// Paddle properties
-const paddleHeight = 10;
-const paddleWidth = 75;
-let paddleX = (canvas.width - paddleWidth) / 2;
+function resizeCanvas() {
+  const aspectRatio = 3 / 4;
+  const maxWidth = window.innerWidth;
+  const maxHeight = window.innerHeight;
 
-// Controls
-let rightPressed = false;
-let leftPressed = false;
+  let width = maxWidth;
+  let height = maxWidth / aspectRatio;
 
-document.addEventListener("keydown", keyDownHandler);
-document.addEventListener("keyup", keyUpHandler);
+  if (height > maxHeight) {
+    height = maxHeight;
+    width = maxHeight * aspectRatio;
+  }
 
-function keyDownHandler(e) {
-    if (e.key === "Right" || e.key === "ArrowRight") rightPressed = true;
-    else if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = true;
+  canvas.width = width;
+  canvas.height = height;
 }
 
-function keyUpHandler(e) {
-    if (e.key === "Right" || e.key === "ArrowRight") rightPressed = false;
-    else if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = false;
+window.addEventListener('resize', resizeCanvas);
+window.addEventListener('orientationchange', resizeCanvas);
+resizeCanvas();
+
+function updateDimensions() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+
+  ballRadius = canvas.height * 0.015;
+  paddleHeight = canvas.height * 0.02;
+  paddleWidth = canvas.width * 0.15;
+
+  paddleX = (canvas.width - paddleWidth) / 2;
+  ballX = canvas.width / 4;
+  ballY = canvas.height - 30;
 }
 
-// Draw functions
+window.addEventListener("resize", () => {
+  updateDimensions();
+  resetBallAndPaddle();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Right" || e.key === "ArrowRight") rightPressed = true;
+  if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = true;
+});
+
+document.addEventListener("keyup", (e) => {
+  if (e.key === "Right" || e.key === "ArrowRight") rightPressed = false;
+  if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = false;
+});
+
 function drawBall() {
-    ctx.beginPath();
-    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI*2);
-    ctx.fillStyle = "#ff0";
-    ctx.fill();
-    ctx.closePath();
+  ctx.beginPath();
+  ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+  ctx.fillStyle = "#ff0";
+  ctx.fill();
+  ctx.closePath();
 }
 
 function drawPaddle() {
-    ctx.beginPath();
-    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-    ctx.fillStyle = "#fff";
-    ctx.fill();
-    ctx.closePath();
+  ctx.beginPath();
+  ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+  ctx.fillStyle = "#fff";
+  ctx.fill();
+  ctx.closePath();
 }
 
 function drawScore() {
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "#fff";
-    ctx.fillText("Score: " + score, 8, 20);
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "left";
+  ctx.fillText("Score: " + score, 8, 20);
 }
 
 function drawLevel() {
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "#fff";
-    ctx.fillText("Level: " + level, canvas.width - 90, 20);
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "right";
+  ctx.fillText("Level: " + level, canvas.width - 8, 20);
 }
 
 function drawLives() {
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "#fff";
-    ctx.fillText("Lives: " + lives, canvas.width - 90, 50);
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "right";
+  ctx.fillText("Lives: " + lives, canvas.width - 8, 50);
 }
 
 function drawButton() {
-    ctx.fillStyle = button.color;
-    ctx.fillRect(button.x, button.y, button.width, button.height);
+  button.x = canvas.width / 2 - button.width / 2;
+  button.y = canvas.height / 2 + 30;
 
-    ctx.fillStyle = "#fff";
-    ctx.font = "16px Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(button.text, button.x + button.width / 2, button.y + button.height / 2);
+  ctx.fillStyle = button.color;
+  ctx.fillRect(button.x, button.y, button.width, button.height);
+
+  ctx.fillStyle = "#fff";
+  ctx.font = "16px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(button.text, button.x + button.width / 2, button.y + button.height / 2);
 }
 
-// Game loop
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function update() {
+  if (isPaused || isGameOver || !isGameStarted) return;
 
-    drawBall();
-    drawPaddle();
-    drawScore();
-    drawLevel();
-    drawLives();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (isGameOver) {
-        ctx.font = "24px Arial";
-        ctx.fillStyle = "#f00";
-        ctx.textAlign = "center";
-        ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 20);
-        drawButton();
+  drawBall();
+  drawPaddle();
+  drawScore();
+  drawLevel();
+  drawLives();
+
+  ballX += dx;
+  ballY += dy;
+
+  if (ballX + dx > canvas.width - ballRadius || ballX + dx < ballRadius) {
+    dx = -dx;
+  }
+
+  if (ballY + dy < ballRadius) {
+    dy = -dy;
+  } else if (ballY + dy > canvas.height - ballRadius) {
+    if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+      dy = -dy;
+      paddleHitSound.currentTime = 0;
+      paddleHitSound.play();
+      score++;
+
+      if (score >= nextLevelScore && score < WINNING_SCORE) {
+        level++;
+        nextLevelScore += 5;
+
+        levelUpSound.currentTime = 0;
+        levelUpSound.play().catch(e => console.warn("Level up sound error:", e));
+
+        dx += dx > 0 ? 0.5 : -0.5;
+        dy += dy > 0 ? 0.5 : -0.5;
+      }
+
+      if (score >= WINNING_SCORE) {
+        isGameOver = true;
+        cancelAnimationFrame(animationId);
+        drawStartOrGameOverScreen();
         return;
+      }
+    } else {
+      lives--;
+      loseLifeSound.currentTime = 0;
+      loseLifeSound.play();
+
+      if (lives === 0) {
+        isGameOver = true;
+        cancelAnimationFrame(animationId);
+        drawStartOrGameOverScreen();
+        return;
+      } else {
+        resetBallAndPaddle();
+      }
     }
+  }
 
-    ballX += dx;
-    ballY += dy;
+  if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += 6;
+  else if (leftPressed && paddleX > 0) paddleX -= 6;
 
-    // Ball collision with side walls
-    if (ballX + dx > canvas.width - ballRadius || ballX + dx < ballRadius) {
-        dx = -dx;
-    }
-    // Ball collision with top
-    if (ballY + dy < ballRadius) {
-        dy = -dy;
-    } else if (ballY + dy > canvas.height - ballRadius) {
-        // ball hits bottom
-        if (ballX > paddleX && ballX < paddleX + paddleWidth) {
-            dy = -dy;
-            score++; // score increment
-
-            // Speed increase after 5 points
-            if (score % 5 === 0) {
-                dx *= speedMultiplier;
-                dy *= speedMultiplier;
-                level++;
-            }
-        } else {
-            lives--;
-            if (lives === 0) {
-                isGameOver = true;
-            } else {
-                resetBallAndPaddle();
-            }
-        }
-    }
-
-    if (rightPressed && paddleX < canvas.width - paddleWidth) {
-        paddleX += 5;
-    } else if (leftPressed && paddleX > 0) {
-        paddleX -= 5;
-    }
-
-    requestAnimationFrame(draw);
+  animationId = requestAnimationFrame(update);
 }
 
 function resetBallAndPaddle() {
-    ballX = canvas.width / 20;
-    ballY = canvas.height - 30;
+  paddleX = (canvas.width - paddleWidth) / 2;
+  ballX = canvas.width / 2;
+  ballY = ballRadius + 10;
 
-    // Calculate current speed magnitude
-    const speed = Math.hypot(dx, dy);
-
-    // Use consistent direction (right and up), normalize to keep speed
-    dx = speed * 0.7;   // X component of speed
-    dy = -speed * 0.7;  // Y component of speed (upward)
-
-    paddleX = (canvas.width - paddleWidth) / 2;
+  const baseSpeed = Math.min(1.5 + level * 0.5, 6);
+  const direction = Math.random() < 0.5 ? -1 : 1;
+  dx = baseSpeed * direction;
+  dy = baseSpeed;
 }
 
+function drawStartOrGameOverScreen() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawScore();
+  drawLevel();
+  drawLives();
 
-// Restart game if button clicked
-canvas.addEventListener("click", function(e) {
-    if (!isGameOver) return;
+  bgMusic.pause();
+  ctx.font = "28px Arial";
+  ctx.textAlign = "center";
 
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+  if (!isGameStarted) {
+    ctx.fillStyle = "#fff";
+    ctx.fillText("Press play to start", canvas.width / 2, canvas.height / 2 - 40);
+    button.text = "Play";
+  } else if (isGameOver) {
+    const isWin = (lives > 0);
 
-    if (
-        mouseX >= button.x &&
-        mouseX <= button.x + button.width &&
-        mouseY >= button.y &&
-        mouseY <= button.y + button.height
-    ) {
-        // Reset everything
-        score = 0;
-        level = 1;
-        lives = 5;
-        dx = 2;
-        dy = -2;
-        isGameOver = false;
-        resetBallAndPaddle();
-        draw();
-    }
-});
-
-// Cursor pointer on hover
-canvas.addEventListener("mousemove", function(e) {
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    if (
-        isGameOver &&
-        mouseX >= button.x &&
-        mouseX <= button.x + button.width &&
-        mouseY >= button.y &&
-        mouseY <= button.y + button.height
-    ) {
-        canvas.style.cursor = "pointer";
+    if (isWin) {
+      winSound.currentTime = 0;
+      winSound.play().catch(e => console.warn("Win sound error:", e));
     } else {
-        canvas.style.cursor = "default";
+      gameOverSound.currentTime = 0;
+      gameOverSound.play().catch(e => console.warn("Game Over sound error:", e));
     }
+
+    ctx.fillStyle = isWin ? "#FFD700" : "#f00";
+    const message = isWin ? "You Win!" : "Game Over";
+    button.text = isWin ? "Play Again" : "Restart";
+    ctx.fillText(message, canvas.width / 2, canvas.height / 2 - 20);
+
+    document.getElementById("leftBtn").disabled = true;
+    document.getElementById("rightBtn").disabled = true;
+    document.getElementById("pauseBtn").disabled = true;
+  }
+
+  drawButton();
+}
+
+canvas.addEventListener("click", function (e) {
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  const clickedButton =
+    mouseX >= button.x &&
+    mouseX <= button.x + button.width &&
+    mouseY >= button.y &&
+    mouseY <= button.y + button.height;
+
+  if (clickedButton) {
+    isGameStarted = true;
+    isGameOver = false;
+    score = 0;
+    level = 1;
+    lives = 5;
+    isPaused = false;
+
+    document.getElementById("leftBtn").disabled = false;
+    document.getElementById("rightBtn").disabled = false;
+    document.getElementById("pauseBtn").disabled = false;
+
+    bgMusic.currentTime = 0;
+    bgMusic.play();
+
+    gameOverSound.muted = true;
+    gameOverSound.play().then(() => {
+      gameOverSound.pause();
+      gameOverSound.currentTime = 0;
+      gameOverSound.muted = false;
+    }).catch(() => {});
+
+    updateDimensions();
+    resetBallAndPaddle();
+    update();
+  }
+
+  document.getElementById("pauseBtn").innerHTML =
+    '<i class="fas fa-pause" style="margin-right: 8px;"></i>Pause';
 });
 
-draw();
+canvas.addEventListener("mousemove", function (e) {
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  const hoveringButton =
+    mouseX >= button.x &&
+    mouseX <= button.x + button.width &&
+    mouseY >= button.y &&
+    mouseY <= button.y + button.height;
+
+  canvas.style.cursor =
+    (!isGameStarted || isGameOver) && hoveringButton ? "pointer" : "default";
+});
+
+document.getElementById("pauseBtn").addEventListener("click", () => {
+  if (isGameOver || !isGameStarted) return;
+
+  isPaused = !isPaused;
+  const pauseBtn = document.getElementById("pauseBtn");
+
+  pauseBtn.innerHTML = isPaused
+    ? '<i class="fas fa-play" style="margin-right: 8px;"></i>Resume'
+    : '<i class="fas fa-pause" style="margin-right: 8px;"></i>Pause';
+
+  if (isPaused) {
+    cancelAnimationFrame(animationId);
+  } else {
+    update();
+  }
+});
+
+document.getElementById("leftBtn").addEventListener("mousedown", () => leftPressed = true);
+document.getElementById("leftBtn").addEventListener("mouseup", () => leftPressed = false);
+document.getElementById("rightBtn").addEventListener("mousedown", () => rightPressed = true);
+document.getElementById("rightBtn").addEventListener("mouseup", () => rightPressed = false);
+
+// Initial setup
+updateDimensions();
+drawStartOrGameOverScreen();
