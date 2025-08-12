@@ -33,7 +33,7 @@ let animationId;
 let rightPressed = false;
 let leftPressed = false;
 
-const MAX_LEVEL = 3;
+const MAX_LEVEL = 6;
 const WINNING_SCORE = (MAX_LEVEL - 1) * 5;
 
 const button = {
@@ -343,3 +343,4 @@ document.getElementById("rightBtn").addEventListener("mouseup", () => rightPress
 // Initial setup
 updateDimensions();
 drawStartOrGameOverScreen();
+
