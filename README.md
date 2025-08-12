@@ -1,5 +1,5 @@
 # Ball and Paddle Game
-A simple and elegant Ball-and-Paddle browser game built with plain HTML, CSS, and JavaScript—perfect for testing game logic, animation, and user interaction fundamentals.
+A simple and elegant Ball-and-Paddle browser game built with plain HTML, CSS, and JavaScript.
 
 ## 🚀 Live Demo
 Play it here:
@@ -10,7 +10,10 @@ Play it here:
 - Simple collision detection
 - Keyboard controls for paddle movement
 - Pure HTML/CSS/JavaScript (no external libraries)
-- Mobile controls
+- Score Counter: Increment points when the ball hits the paddle successfully
+- Level Counter: Increment levels after every 5 points
+- Speed Variation: Ball speed increases to ramp up difficulty
+- Mobile Support: Touch controls for mobile gameplay
 
 ## 📂 Folder Structure
 ```text
@@ -29,9 +32,13 @@ tic-tac-toe/
 | **Ball**               | Moves up/down & bounces off walls and paddle. Position updates using `requestAnimationFrame`. |
 | **Paddle**             | Controlled by user (move left/right or up/down depending on implementation).                  |
 | **Collision Logic**    | Detects overlap between ball and paddle or walls. Reverses direction upon impact.             |
-| **Scoring (optional)** | Could be added to track missed hits or keep points.                                           |
+| **Scoring**            | Tracks hits and keeps points.                                                                 |
 
 
 ## 🎮 Game Play
 
-![2-Players Mode](images/game-play.gif)
+![Game Play](images/game-play.gif)
+
+## 📜 License
+This project is open for learning and free to use!
+Feel free to modify, extend, or integrate it however you like.
