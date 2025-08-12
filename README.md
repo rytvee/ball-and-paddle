@@ -1,20 +1,27 @@
 # Ball and Paddle Game
+A simple and elegant Ball-and-Paddle browser game built with plain HTML, CSS, and JavaScript—perfect for testing game logic, animation, and user interaction fundamentals.
 
-A simpe browser-based ball and paddle game built with HTML5 Canvas and JavaScript. The goal is to keep the ball from bouncing off the paddle.
+## 🚀 Live Demo
+Play it here:
+[Live Ball and Paddle Game](https://rytvee.github.io/ball-and-paddle/)
 
-## Features
-
+## 📌 Features
 - Ball bouncing off walls and paddle
 - Simple collision detection
 - Keyboard controls for paddle movement
 - Pure HTML/CSS/JavaScript (no external libraries)
+- Mobile controls
 
-## Demo
+## 📂 Folder Structure
+```text
+tic-tac-toe/
+│── index.html        # Main game layout
+│── style.css         # Styling for the game board & UI
+│── game.js           # Game logic (players, computer AI, score)
+│── sounds/           # music, sounds 
+└── images/           # Icon, game play gif
+```
 
-Play the game directly from your browser:
+## 🎮 Game Play
 
-https://rytvee.github.io/ball-and-paddle/
-
-## Controls
-- Move Paddle Left: ←
-- Move Paddle Right: →
+![2-Players Mode](images/game-play.gif)
