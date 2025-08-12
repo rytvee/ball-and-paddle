@@ -1,20 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ball and Paddle</title>
-    <style>
-        canvas {
-            background: #000;
-            display: block;
-            margin: 0 auto;
-            border: 2px solid #fff;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ball and Paddle</title>
+  <link rel="icon" href="images/favicon.ico" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <canvas id="gameCanvas" width="480" height="320"></canvas>
-    <script src="game.js" defer></script>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Controls Container -->
+  <div id="mobileControls">
+    <button id="leftBtn" disabled>
+      <i class="fas fa-arrow-left" style="margin-right: 8px;"></i>Left
+    </button>
+    <button id="pauseBtn" disabled>
+      <i class="fas fa-pause" style="margin-right: 8px;"></i>
+      <span id="pause-label">Pause</span>
+    </button>
+    <button id="rightBtn" disabled>
+      Right <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+    </button>
+  </div>
+
+  <!-- Audio Elements -->
+  <audio id="paddleHitSound" src="sounds/paddle-hit.mp3"></audio>
+  <audio id="loseLifeSound" src="sounds/lose-life.mp3"></audio>
+  <audio id="bgMusic" src="sounds/bgmusic.mp3" loop></audio>
+  <audio id="gameOverSound" src="sounds/game-lose.mp3"></audio>
+  <audio id="winSound" src="sounds/game-win.mp3"></audio>
+  <audio id="levelUpSound" src="sounds/level-up.mp3" preload="auto"></audio>
+
+  <!-- JavaScript -->
+  <script src="game.js"></script>
+
 </body>
 </html>
