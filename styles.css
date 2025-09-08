@@ -24,15 +24,6 @@ canvas {
   box-sizing: border-box;
 }
 
-/* Main control wrapper */
-#controlBtns {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
 /* Pause and Arrow Buttons */
 #pauseBtn,
 #mobileControls button {
@@ -47,10 +38,6 @@ canvas {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-#mobileControls button {
-  margin: 0px 5px;
-}
-
 /* Hover Effect */
 #pauseBtn:hover,
 #mobileControls button:hover {
@@ -63,10 +50,8 @@ canvas {
   transform: scale(0.96);
 }
 
-#leftBtn,
-#rightBtn,
 #pauseBtn {
-  width: 120px;
+  width: 150px;
   text-align: center;
 }
 
@@ -89,9 +74,13 @@ canvas {
 }
 
 @media (max-width: 480px) {
-  #leftBtn,
-  #rightBtn,
   #pauseBtn {
-    width: 115px;
+    width: 100px;
   }
+
+  #leftBtn,
+  #rightBtn {
+  display: block;
+  width: 90px;
+}
 }
