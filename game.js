@@ -11,12 +11,6 @@ const gameOverSound = document.getElementById("gameOverSound");
 const winSound = document.getElementById("winSound");
 const levelUpSound = document.getElementById("levelUpSound");
 
-if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-  document.getElementById("leftBtn").style.display = "inline-block";
-  document.getElementById("rightBtn").style.display = "inline-block";
-  document.getElementById("pause-label").style.display = "none";
-}
-
 let ballX, ballY;
 let dx = 0;
 let dy = 0;
@@ -33,7 +27,7 @@ let animationId;
 let rightPressed = false;
 let leftPressed = false;
 
-const MAX_LEVEL = 6;
+const MAX_LEVEL = 3;
 const WINNING_SCORE = (MAX_LEVEL - 1) * 5;
 
 const button = {
@@ -335,12 +329,36 @@ document.getElementById("pauseBtn").addEventListener("click", () => {
   }
 });
 
-document.getElementById("leftBtn").addEventListener("mousedown", () => leftPressed = true);
-document.getElementById("leftBtn").addEventListener("mouseup", () => leftPressed = false);
-document.getElementById("rightBtn").addEventListener("mousedown", () => rightPressed = true);
-document.getElementById("rightBtn").addEventListener("mouseup", () => rightPressed = false);
+
+
+  // Touch controls (only for mobile)
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+  document.getElementById("leftBtn").style.display = "inline-block";
+  document.getElementById("rightBtn").style.display = "inline-block";
+  document.getElementById("pause-label").style.display = "none";
+
+  const leftBtn = document.getElementById("leftBtn");
+  const rightBtn = document.getElementById("rightBtn");
+
+  leftBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    leftPressed = true;
+  });
+  leftBtn.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    leftPressed = false;
+  });
+
+  rightBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    rightPressed = true;
+  });
+  rightBtn.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    rightPressed = false;
+  });
+}
 
 // Initial setup
 updateDimensions();
 drawStartOrGameOverScreen();
-
