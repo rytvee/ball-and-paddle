@@ -75,8 +75,10 @@ canvas {
 
 @media (max-width: 480px) {
   #pauseBtn {
-    width: 100px;
+    width: 90px;
   }
+  #pause-label {
+    display: none;
 
   #leftBtn,
   #rightBtn {
