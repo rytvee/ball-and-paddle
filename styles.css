@@ -1,4 +1,3 @@
-
 *{
   -webkit-tap-highlight-color: transparent; /* Remove blue tap highlight on iOS & Android */
   -webkit-touch-callout: none; /* Remove blue tap highlight on iOS long-press menu */
@@ -52,7 +51,7 @@ canvas {
 }
 
 #pauseBtn {
-  width: 150px;
+  width: 100px;
   text-align: center;
 }
 
@@ -76,7 +75,7 @@ canvas {
 
 @media (max-width: 480px) {
   #pauseBtn {
-    width: 90px;
+    width: 80px;
   }
   #pause-label {
     display: none;
