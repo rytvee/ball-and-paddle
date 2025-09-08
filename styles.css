@@ -1,3 +1,4 @@
+
 *{
   -webkit-tap-highlight-color: transparent; /* Remove blue tap highlight on iOS & Android */
   -webkit-touch-callout: none; /* Remove blue tap highlight on iOS long-press menu */
@@ -79,10 +80,10 @@ canvas {
   }
   #pause-label {
     display: none;
-
+  }
   #leftBtn,
   #rightBtn {
-  display: block;
-  width: 90px;
-}
+    display: block;
+    width: 90px;
+  }
 }
