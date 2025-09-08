@@ -1,3 +1,7 @@
+*{
+  -webkit-tap-highlight-color: transparent; /* Remove blue tap highlight on iOS & Android */
+  -webkit-touch-callout: none; /* Remove blue tap highlight on iOS long-press menu */
+}
 body {
   margin: 0;
   padding: 0;
@@ -41,6 +45,10 @@ canvas {
   cursor: pointer;
   transition: background-color 0.25s ease, transform 0.1s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#mobileControls button {
+  margin: 0px 5px;
 }
 
 /* Hover Effect */
