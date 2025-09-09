@@ -1,5 +1,5 @@
 //  =======================
-//          Setup
+//  Setup
 //  =======================
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -161,7 +161,7 @@ function drawButton() {
 }
 
 // =======================
-// Music Toggle (Font Awesome Icon)
+// Music Toggle
 // =======================
 let musicMuted = false;
 const musicIcon = {
@@ -196,6 +196,9 @@ function drawMusicIcon() {
   musicIcon.height = musicIcon.size;
 }
 
+// =======================
+// Game Canvas Functions
+// =======================
 
 function update() {
   if (isPaused || isGameOver || !isGameStarted) return;
@@ -405,7 +408,9 @@ pauseBtn.addEventListener("click", () => {
 });
 
 
+// =======================
 // Touch controls (only for mobile)
+// =======================
 if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
   document.getElementById("leftBtn").style.display = "inline-block";
   document.getElementById("rightBtn").style.display = "inline-block";
@@ -433,7 +438,9 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
   });
 }
 
-
+// =======================
+// Desktop Mouse Control
+// =======================
 document.getElementById("leftBtn").addEventListener("mousedown", () => leftPressed = true);
 document.getElementById("leftBtn").addEventListener("mouseup", () => leftPressed = false);
 document.getElementById("rightBtn").addEventListener("mousedown", () => rightPressed = true);
