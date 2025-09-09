@@ -1,5 +1,5 @@
 //  =======================
-//  Setup
+//          Setup
 //  =======================
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -447,5 +447,7 @@ document.getElementById("rightBtn").addEventListener("mousedown", () => rightPre
 document.getElementById("rightBtn").addEventListener("mouseup", () => rightPressed = false);
 
 // Initial setup
-updateDimensions();
-drawStartOrGameOverScreen();
+document.addEventListener("DOMContentLoaded", () => {
+  updateDimensions();
+  drawStartOrGameOverScreen();
+});
