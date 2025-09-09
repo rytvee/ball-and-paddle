@@ -11,9 +11,10 @@ Play it here:
 - Keyboard controls for paddle movement
 - Pure HTML/CSS/JavaScript (no external libraries)
 - Score Counter: Increment points when the ball hits the paddle successfully
-- Level Counter: Increment levels after every 5 points
+- Level Counter: Increment levels after every 5 points, max of 5 levels
 - Speed Variation: Ball speed increases to ramp up difficulty
 - Mobile Support: Touch controls for mobile gameplay
+- Music Control: Mute/Unmute
 
 ## 📂 Folder Structure
 ```text
