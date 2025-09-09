@@ -4,6 +4,10 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+const pauseBtn = document.getElementById("pauseBtn");
+const pauseIcon = document.getElementById("pause-icon");
+const pauseLabel = document.getElementById("pause-label");
+
 const paddleHitSound = document.getElementById("paddleHitSound");
 const loseLifeSound = document.getElementById("loseLifeSound");
 const bgMusic = document.getElementById("bgMusic");
@@ -29,7 +33,7 @@ let animationId;
 let rightPressed = false;
 let leftPressed = false;
 
-const MAX_LEVEL = 3;
+const MAX_LEVEL = 6;
 const WINNING_SCORE = (MAX_LEVEL - 1) * 5;
 
 const button = {
@@ -69,12 +73,19 @@ function updateDimensions() {
 
   ballRadius = canvas.height * 0.015;
   paddleHeight = canvas.height * 0.02;
-  paddleWidth = canvas.width * 0.15;
+
+  // Make paddle wider on mobile
+  if ("ontouchstart" in window || navigator.maxTouchPoints > 0) {
+    paddleWidth = canvas.width * 0.25; // 25% of screen width on mobile
+  } else {
+    paddleWidth = canvas.width * 0.15; // 15% on desktop
+  }
 
   paddleX = (canvas.width - paddleWidth) / 2;
   ballX = canvas.width / 4;
   ballY = canvas.height - 30;
 }
+
 
 window.addEventListener("resize", () => {
   updateDimensions();
@@ -149,6 +160,43 @@ function drawButton() {
   ctx.fillText(button.text, button.x + button.width / 2, button.y + button.height / 2);
 }
 
+// =======================
+// Music Toggle (Font Awesome Icon)
+// =======================
+let musicMuted = false;
+const musicIcon = {
+  x: 100,
+  y: 10,
+  size: 20
+};
+
+function drawMusicIcon() {
+  const iconX = canvas.width - 25;
+  const iconY = 60;
+
+  // Clear previous icon area
+  ctx.clearRect(iconX - 2, iconY - 2, musicIcon.size + 4, musicIcon.size + 4);
+
+  ctx.save();
+  ctx.font = `900 ${musicIcon.size}px "Font Awesome 6 Free"`;
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+
+  // Draw only the correct icon
+  const icon = musicMuted ? "\uf6a9" : "\uf028"; // mute / volume
+  ctx.fillText(icon, iconX, iconY);
+
+  ctx.restore();
+
+  // Update clickable area
+  musicIcon.x = iconX - musicIcon.size / 2;
+  musicIcon.y = iconY;
+  musicIcon.width = musicIcon.size;
+  musicIcon.height = musicIcon.size;
+}
+
+
 function update() {
   if (isPaused || isGameOver || !isGameStarted) return;
 
@@ -160,6 +208,7 @@ function update() {
   drawHighScore();
   drawLevel();
   drawLives();
+  drawMusicIcon();
 
   ballX += dx;
   ballY += dy;
@@ -281,6 +330,20 @@ canvas.addEventListener("click", function (e) {
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
 
+  // Check if music icon is clicked
+  if (
+    mouseX >= musicIcon.x &&
+    mouseX <= musicIcon.x + musicIcon.width &&
+    mouseY >= musicIcon.y &&
+    mouseY <= musicIcon.y + musicIcon.height
+  ) {
+    musicMuted = !musicMuted;
+    bgMusic.muted = musicMuted; // toggle the actual music
+    drawMusicIcon(); // redraw the icon immediately
+    return; // stop further click actions
+  }
+
+  // Check if the restart/play button is clicked
   const clickedButton =
     mouseX >= button.x &&
     mouseX <= button.x + button.width &&
@@ -288,6 +351,7 @@ canvas.addEventListener("click", function (e) {
     mouseY <= button.y + button.height;
 
   if (clickedButton) {
+    // Start/restart game logic
     isGameStarted = true;
     isGameOver = false;
     score = 0;
@@ -302,20 +366,10 @@ canvas.addEventListener("click", function (e) {
     bgMusic.currentTime = 0;
     bgMusic.play();
 
-    gameOverSound.muted = true;
-    gameOverSound.play().then(() => {
-      gameOverSound.pause();
-      gameOverSound.currentTime = 0;
-      gameOverSound.muted = false;
-    }).catch(() => {});
-
     updateDimensions();
     resetBallAndPaddle();
     update();
   }
-
-  document.getElementById("pauseBtn").innerHTML =
-    '<i class="fas fa-pause" style="margin-right: 8px;"></i>Pause';
 });
 
 canvas.addEventListener("mousemove", function (e) {
@@ -333,22 +387,23 @@ canvas.addEventListener("mousemove", function (e) {
     (!isGameStarted || isGameOver) && hoveringButton ? "pointer" : "default";
 });
 
-document.getElementById("pauseBtn").addEventListener("click", () => {
+
+pauseBtn.addEventListener("click", () => {
   if (isGameOver || !isGameStarted) return;
 
   isPaused = !isPaused;
-  const pauseBtn = document.getElementById("pauseBtn");
-
-  pauseBtn.innerHTML = isPaused
-    ? '<i class="fas fa-play" style="margin-right: 8px;"></i>Resume'
-    : '<i class="fas fa-pause" style="margin-right: 8px;"></i>Pause';
 
   if (isPaused) {
+    pauseIcon.className = "fas fa-play"; // show play icon
+    pauseLabel.textContent = "Resume";
     cancelAnimationFrame(animationId);
   } else {
+    pauseIcon.className = "fas fa-pause"; // show pause icon
+    pauseLabel.textContent = "Pause";
     update();
   }
 });
+
 
 // Touch controls (only for mobile)
 if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
@@ -377,6 +432,12 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
     rightPressed = false;
   });
 }
+
+
+document.getElementById("leftBtn").addEventListener("mousedown", () => leftPressed = true);
+document.getElementById("leftBtn").addEventListener("mouseup", () => leftPressed = false);
+document.getElementById("rightBtn").addEventListener("mousedown", () => rightPressed = true);
+document.getElementById("rightBtn").addEventListener("mouseup", () => rightPressed = false);
 
 // Initial setup
 updateDimensions();
