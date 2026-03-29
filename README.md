@@ -1,11 +1,11 @@
-# 🎮 Ball and Paddle Game
+# Ball and Paddle Game
 A simple and elegant Ball-and-Paddle browser game built with plain HTML, CSS, and JavaScript.
 
-## 🌐 Live Demo
+## Live Demo
 Play it here:
 [Live Ball and Paddle Game](https://rytvee.github.io/ball-and-paddle/)
 
-## ✨ Features
+## Features
 - Ball bouncing off walls and paddle
 - Simple collision detection
 - Keyboard controls for paddle movement
@@ -17,7 +17,7 @@ Play it here:
 - Mobile Support: Touch controls for mobile gameplay
 - Music Control: Mute/Unmute
 
-## 📂 Folder Structure
+## Folder Structure
 ```text
 tic-tac-toe/
 │── index.html        # Main game layout
@@ -27,7 +27,7 @@ tic-tac-toe/
 └── images/           # Icon, game play gif
 ```
 
-##  📋 Overview
+## Overview
 
 | Part                   | Role                                                                                          |
 | ---------------------- | --------------------------------------------------------------------------------------------- |
@@ -37,10 +37,10 @@ tic-tac-toe/
 | **Scoring**            | Tracks hits and keeps points.                                                                 |
 
 
-## 🖥️ Gameplay
+## Gameplay
 
 ![Game Play](images/game-play.gif)
 
-## 📜 License
+## License
 This project is open for learning and free to use!
 Feel free to modify, extend, or integrate it however you like.
